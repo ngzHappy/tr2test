@@ -54,7 +54,18 @@ namespace _18_11_18_private {
                         auto varPos = mmm_hash_map.emplace(key, std::move(up_cast_map));
                         return &(varPos.first->second);
                 }
-            };
+
+                const class_information * find(
+                        const ExportRegisterClassInformation::type_index & key) {
+                    std::shared_lock varReadLock{ mmm_mutex };
+                    auto varPos = std::as_const(mmm_hash_map).find(key);
+                    if (varPos != mmm_hash_map.end()) {
+                        return &(varPos->second);
+                    }
+                    return nullptr;
+                }
+
+            }/*endl class */;
 
             static inline type_index_hash_map * get_type_index_hash_map() {
                 /*never delete ...*/
@@ -70,6 +81,16 @@ namespace _18_11_18_private {
         static_cast_map && argMap) {
         auto varMap = this_cpp_file::get_type_index_hash_map();
         return &(varMap->insert(argIndex, std::move(argMap))->up_cast_map);
+    }
+
+    const ExportRegisterClassInformation::static_cast_map * ExportRegisterClassInformation::find_up_cast_map(
+            const type_index & argIndex){
+        auto varMap = this_cpp_file::get_type_index_hash_map();
+        auto varAns = varMap->find( argIndex );
+        if(varAns){
+            return &(varAns->up_cast_map);
+        }
+        return nullptr;
     }
 
 }/*namespace _18_11_18_private*/

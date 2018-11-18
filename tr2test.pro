@@ -22,5 +22,8 @@ QT += core
 QT += gui
 QT += widgets
 
+DISTFILES += \
+    readme.txt
+
 
 

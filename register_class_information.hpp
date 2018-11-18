@@ -22,6 +22,7 @@ namespace _18_11_18_private {
         typedef void*(*static_type_cast_function)(void *);
         using static_cast_map = map<type_index, static_type_cast_function>;
         static const static_cast_map * register_up_cast_map(const type_index &, static_cast_map &&);
+        static const static_cast_map * find_up_cast_map(const type_index &);
     protected:
         template< template<typename ...> class I, typename ... T >
         inline static std::size_t ppp_class_size(const I<T ...> &) {
@@ -61,7 +62,7 @@ namespace _18_11_18_private {
     public:
         using type_index = ExportRegisterClassInformation::type_index;
         using static_cast_map = ExportRegisterClassInformation::static_cast_map;
-        static const int class_deeth/*继承树的深度*/;
+        static const int class_deepth/*继承树的深度*/;
         static const type_index class_index/*当前类的type_index*/;
         static const static_cast_map * class_up_cast_map/*向上类型转换表*/;
     private:
@@ -71,7 +72,7 @@ namespace _18_11_18_private {
     };
 
     template<typename T>
-    const int RegisterClassInformation<T>::class_deeth =
+    const int RegisterClassInformation<T>::class_deepth =
         RegisterClassInformation<T>::register_class_depth();
 
     template<typename T>
@@ -115,8 +116,8 @@ class RegisterClassInformation : private _18_11_18_private::RegisterClassInforma
 public:
     using type_index = typename super_type::type_index;
     using type_up_cast_map = typename super_type::static_cast_map;
-    static inline const int & get_class_deeth() {
-        return super_type::class_deeth;
+    static inline const int & get_class_deepth() {
+        return super_type::class_deepth;
     }
     static inline const type_index & get_class_index() {
         return super_type::class_index;
@@ -126,8 +127,41 @@ public:
     }
 };
 
+template<typename T>
+static inline const _18_11_18_private::ExportRegisterClassInformation::static_cast_map * get_dynamic_class_up_cast_map(T * arg){
+    if(arg == nullptr){
+        return nullptr;
+    }
+    using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
+    static_assert( true == std::is_polymorphic_v<sstd_this_type_> ,"T must have virtual function" );
+    using map_ = _18_11_18_private::ExportRegisterClassInformation::static_cast_map ;
+    using index_type_ = map_::value_type::first_type::second_type;
+    std::hash< index_type_ > varHash/*create the index hash ...*/;
+    index_type_ varIndex{ typeid( *arg ) }/*get the index ...*/;
+    return _18_11_18_private::ExportRegisterClassInformation::find_up_cast_map( { varHash(varIndex) , varIndex } ) ;
+}
 
-
+template<typename To,typename From>
+static inline To * dynamic_class_pointer_cast(From * arg){
+    if(arg == nullptr){
+        return nullptr;
+    }
+    using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t<From> >;
+    static_assert( true == std::is_polymorphic_v<sstd_this_type_> ,"From must have virtual function" );
+    const static RegisterClassInformation<To> varToInformation/*force create to class information */;
+    const static RegisterClassInformation<sstd_this_type_> varFromInformation/*force create from class information*/;
+    auto varCastMap = get_dynamic_class_up_cast_map( arg );
+    if(varCastMap == nullptr){
+        return nullptr;
+    }
+    auto varPos = varCastMap->find( varToInformation.get_class_index() );
+    if(varPos == varCastMap->end()){
+        return nullptr;
+    }
+    using sstd_to_type_ = std::remove_cv_t< std::remove_reference_t<To> >;
+    return static_cast<sstd_to_type_ *>( ( varPos->second )( const_cast<void *>( dynamic_cast< const void * >( arg ) ) ) );
+    (void)varFromInformation;
+}
 
 
 

@@ -31,14 +31,16 @@ int main(int argc,char ** argv){
 
     QApplication varApp{ argc,argv };
 
-   /*this should output 1*/
+   /*this should output 3*/
    std::cout <<  size_ ( std::tr2::bases< B >::type{} ) << std::endl ;
+   /*this should output 0*/
+   std::cout <<  size_ ( std::tr2::bases< int >::type{} ) << std::endl ;
 
    RegisterClassInformation<A> varRA;
    RegisterClassInformation<B> varRB;
    RegisterClassInformation<M> varRM;
    /*this should output 4*/
-   std::cout << "class deepth : " << varRB.get_class_deeth() << std::endl ;
+   std::cout << "class deepth : " << varRB.get_class_deepth() << std::endl ;
    /*this should output true*/
    std::hash< std::type_index > varHash;
    std::cout <<  "class typeid hash : " << ( varRB.get_class_index().first == varHash( typeid(B) ) ) << std::endl ;
@@ -66,6 +68,14 @@ int main(int argc,char ** argv){
        }else{
             std::cout << "???x2" << std::endl ;
        }
+   }
+
+   {
+       B b;
+       A * a = &b;
+       auto b1 = dynamic_class_pointer_cast<B>(a);
+       /*this should output true*/
+       std::cout << "dynamic cast : " <<(b1==(&b)) <<std::endl ;
    }
 
     QWidget varWidget ;
