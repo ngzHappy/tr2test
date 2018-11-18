@@ -1,4 +1,4 @@
-#include "register_class_information.hpp"
+﻿#include "register_class_information.hpp"
 #include <unordered_map>
 #include <shared_mutex>
 

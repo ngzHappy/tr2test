@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <map>
 #include <utility>
@@ -46,9 +46,9 @@ namespace _18_11_18_private {
     public:
         using type_index = ExportRegisterClassInformation::type_index;
         using static_cast_map = ExportRegisterClassInformation::static_cast_map;
-        static const int class_deeth/*¼Ì³ĞÊ÷µÄÉî¶È*/;
-        static const type_index class_index/*µ±Ç°ÀàµÄtype_index*/;
-        static const static_cast_map * class_up_cast_map/*ÏòÉÏÀàĞÍ×ª»»±í*/;
+        static const int class_deeth/*ç»§æ‰¿æ ‘çš„æ·±åº¦*/;
+        static const type_index class_index/*å½“å‰ç±»çš„type_index*/;
+        static const static_cast_map * class_up_cast_map/*å‘ä¸Šç±»å‹è½¬æ¢è¡¨*/;
     private:
         inline static int register_class_depth();
         inline static type_index register_class_index();
