@@ -7,6 +7,10 @@
 #include <functional>
 #include <type_traits>
 
+/**************************************/
+#include <tr2/type_traits>
+/**************************************/
+
 namespace _18_11_18_private {
 
     template<typename K, typename T>
@@ -21,7 +25,7 @@ namespace _18_11_18_private {
     protected:
         template< template<typename ...> class I, typename ... T >
         inline static std::size_t ppp_class_size(const I<T ...> &) {
-            return (sizeof...(T));
+            return (sizeof...(T)) + 1 ;
         }
         template<typename U>
         inline static type_index ppp_get_type_index() {
@@ -37,6 +41,7 @@ namespace _18_11_18_private {
                 [](void * arg)->void * { return static_cast<std::remove_cv_t<
                 std::remove_reference_t< T > > *>(
                     reinterpret_cast<this_class_type_ *>(arg)); })), ...);
+            map->emplace( ppp_get_type_index<this_class_type_>() ,[](void * arg){return arg;} );
             return map;
         }
     };
@@ -70,14 +75,15 @@ namespace _18_11_18_private {
     template<typename T>
     inline int RegisterClassInformation<T>::register_class_depth() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
-        return ppp_class_size<>();
+        return ppp_class_size( typename std::tr2::bases<this_class_type_>::type{} );
     }
 
     template<typename T>
     inline const typename RegisterClassInformation<T>::static_cast_map * RegisterClassInformation<T>::register_static_up_cast_map() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
         static_cast_map varUpCastMap;
-        ppp_create_class_up_cast<this_class_type_>;
+        ppp_create_class_up_cast<this_class_type_>(&varUpCastMap,
+                                                   typename std::tr2::bases<this_class_type_>::type{});
         return RegisterClassInformation::register_up_cast_map(
             RegisterClassInformation::register_class_index(),
             std::move(varUpCastMap));
