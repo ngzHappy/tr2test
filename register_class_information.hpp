@@ -122,8 +122,8 @@ public:
     static inline const type_index & get_class_index() {
         return super_type::class_index;
     }
-    static inline const type_up_cast_map & get_class_up_cast_map() {
-        return *(super_type::class_up_cast_map);
+    static inline const type_up_cast_map * get_class_up_cast_map() {
+        return super_type::class_up_cast_map;
     }
 };
 

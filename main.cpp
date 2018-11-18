@@ -54,8 +54,8 @@ int main(int argc,char ** argv){
 
    const auto & varClassUpCastMap = varRB.get_class_up_cast_map();
    {
-        auto varPos = varClassUpCastMap.find( varRA.get_class_index() );
-        if( varPos == varClassUpCastMap.end() ){
+        auto varPos = varClassUpCastMap->find( varRA.get_class_index() );
+        if( varPos == varClassUpCastMap->end() ){
             std::cout << "???x1" <<std::endl ;
         }else{
             B b ;
@@ -67,8 +67,8 @@ int main(int argc,char ** argv){
    }
 
    {
-       auto varPos = varClassUpCastMap.find( varRM.get_class_index() );
-       if( varPos == varClassUpCastMap.end() ){
+       auto varPos = varClassUpCastMap->find( varRM.get_class_index() );
+       if( varPos == varClassUpCastMap->end() ){
             std::cout << "B can not convert to M" <<std::endl ;
        }else{
             std::cout << "???x2" << std::endl ;
