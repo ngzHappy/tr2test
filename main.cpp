@@ -15,7 +15,12 @@ public:
 
 class P{};
 
-class B : private P , public C, public virtual A {};
+class B :
+        private P ,
+        public C,
+        public virtual A ,
+        private RegisterClassInformation<B>
+{};
 
 class M{
 };
@@ -31,7 +36,7 @@ int main(int argc,char ** argv){
 
     QApplication varApp{ argc,argv };
 
-   /*this should output 3*/
+   /*this should output  */
    std::cout <<  size_ ( std::tr2::bases< B >::type{} ) << std::endl ;
    /*this should output 0*/
    std::cout <<  size_ ( std::tr2::bases< int >::type{} ) << std::endl ;
@@ -39,7 +44,7 @@ int main(int argc,char ** argv){
    RegisterClassInformation<A> varRA;
    RegisterClassInformation<B> varRB;
    RegisterClassInformation<M> varRM;
-   /*this should output 4*/
+   /*this should output */
    std::cout << "class deepth : " << varRB.get_class_deepth() << std::endl ;
    /*this should output true*/
    std::hash< std::type_index > varHash;

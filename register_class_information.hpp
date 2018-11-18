@@ -58,7 +58,7 @@ namespace _18_11_18_private {
     };
 
     template<typename T>
-    class RegisterClassInformation : public ExportRegisterClassInformation {
+    class RegisterClassInformation : private ExportRegisterClassInformation {
     public:
         using type_index = ExportRegisterClassInformation::type_index;
         using static_cast_map = ExportRegisterClassInformation::static_cast_map;
