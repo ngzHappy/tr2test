@@ -13,7 +13,9 @@ public:
     virtual ~C(){}
 };
 
-class B : public C, public virtual A {};
+class P{};
+
+class B : private P , public C, public virtual A {};
 
 class M{
 };
@@ -35,7 +37,7 @@ int main(int argc,char ** argv){
    RegisterClassInformation<A> varRA;
    RegisterClassInformation<B> varRB;
    RegisterClassInformation<M> varRM;
-   /*this should output 3*/
+   /*this should output 4*/
    std::cout << "class deepth : " << varRB.get_class_deeth() << std::endl ;
    /*this should output true*/
    std::hash< std::type_index > varHash;

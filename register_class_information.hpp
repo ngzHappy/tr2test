@@ -34,14 +34,24 @@ namespace _18_11_18_private {
             std::hash<typename type_index::second_type> varIndexHash;
             return type_index{ varIndexHash(varIndex) ,varIndex };
         }
+        template<typename From,typename To>
+        inline static void ppp_insert_static_cast_function(static_cast_map * map){
+            /*private or protected 继承...???*/
+            if constexpr( std::is_convertible_v<From * ,To * > ){
+                map->emplace( ppp_get_type_index<To>() , [](void * arg)->void *{
+                    return static_cast<To *>( reinterpret_cast<From *>( arg ) );
+                } );
+            }else{
+                return;
+            }
+        }
         template< typename U, template<typename ...> class I, typename ... T >
         inline static static_cast_map * ppp_create_class_up_cast(static_cast_map * map, const I<T ...> &) {
             using this_class_type_ = std::remove_cv_t< std::remove_reference_t<U> >;
-            ((void)(map->emplace(ppp_get_type_index<T>(),
-                [](void * arg)->void * { return static_cast<std::remove_cv_t<
-                std::remove_reference_t< T > > *>(
-                    reinterpret_cast<this_class_type_ *>(arg)); })), ...);
-            map->emplace( ppp_get_type_index<this_class_type_>() ,[](void * arg){return arg;} );
+            ( ppp_insert_static_cast_function< this_class_type_ ,
+                    std::remove_cv_t< std::remove_reference_t< T > >
+                    >(map) , ... );
+            ppp_insert_static_cast_function< this_class_type_ , this_class_type_ >( map );
             return map;
         }
     };
