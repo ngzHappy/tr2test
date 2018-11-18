@@ -8,8 +8,26 @@
 #include <type_traits>
 
 /**************************************/
+#if __has_include(<tr2/type_traits>)
 #include <tr2/type_traits>
+#else
+#define NO_TR2_TYPE_TRAITS (1u)
+#endif
 /**************************************/
+
+#if defined(NO_TR2_TYPE_TRAITS)
+template<typename T>
+class sstd_bases{
+public:
+    using type = std::tuple< T & > ;
+};
+#else
+template<typename T>
+class sstd_bases{
+public:
+    using type = typename std::tr2::bases<T>::type ;
+};
+#endif
 
 namespace _18_11_18_private {
 
@@ -35,8 +53,10 @@ namespace _18_11_18_private {
             std::hash<typename type_index::second_type> varIndexHash;
             return type_index{ varIndexHash(varIndex) ,varIndex };
         }
-        template<typename From,typename To>
+        template<typename From_,typename To_>
         inline static void ppp_insert_static_cast_function(static_cast_map * map){
+            using From = std::remove_cv_t< std::remove_reference_t<From_> >;
+            using To = std::remove_cv_t< std::remove_reference_t<To_> >;
             /*private or protected 继承...???*/
             if constexpr( std::is_convertible_v<From * ,To * > ){
                 map->emplace( ppp_get_type_index<To>() , [](void * arg)->void *{
@@ -86,7 +106,7 @@ namespace _18_11_18_private {
     template<typename T>
     inline int RegisterClassInformation<T>::register_class_depth() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
-        return ppp_class_size( typename std::tr2::bases<this_class_type_>::type{} );
+        return ppp_class_size( typename sstd_bases<this_class_type_>::type{} );
     }
 
     template<typename T>
@@ -94,7 +114,7 @@ namespace _18_11_18_private {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
         static_cast_map varUpCastMap;
         ppp_create_class_up_cast<this_class_type_>(&varUpCastMap,
-                                                   typename std::tr2::bases<this_class_type_>::type{});
+                                                   typename sstd_bases<this_class_type_>::type{});
         return RegisterClassInformation::register_up_cast_map(
             RegisterClassInformation::register_class_index(),
             std::move(varUpCastMap));
