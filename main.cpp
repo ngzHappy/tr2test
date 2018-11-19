@@ -31,15 +31,19 @@ inline static std::size_t size_( const I<T ...> & ){
 }
 
 #include <iostream>
+#include <type_traits>
 
 int main(int argc,char ** argv){
 
     QApplication varApp{ argc,argv };
 
+#if defined(NO_TR2_TYPE_TRAITS)
+#else
    /*this should output  */
    std::cout <<  size_ ( std::tr2::bases< B >::type{} ) << std::endl ;
    /*this should output 0*/
    std::cout <<  size_ ( std::tr2::bases< int >::type{} ) << std::endl ;
+#endif
 
    RegisterClassInformation<A> varRA;
    RegisterClassInformation<B> varRB;

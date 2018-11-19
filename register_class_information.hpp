@@ -6,6 +6,7 @@
 #include <typeindex>
 #include <functional>
 #include <type_traits>
+#include "sstd_type_traits.hpp"
 
 /**************************************/
 #if __has_include(<tr2/type_traits>)
@@ -19,7 +20,7 @@
 template<typename T>
 class sstd_bases{
 public:
-    using type = std::tuple< T & > ;
+    using type = sstd::type_traits::class_wrap<> ;
 };
 #else
 template<typename T>
@@ -106,7 +107,7 @@ namespace _18_11_18_private {
     template<typename T>
     inline int RegisterClassInformation<T>::register_class_depth() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
-        return ppp_class_size( typename sstd_bases<this_class_type_>::type{} );
+        return static_cast<int>(ppp_class_size( typename sstd_bases<this_class_type_>::type{} ));
     }
 
     template<typename T>
