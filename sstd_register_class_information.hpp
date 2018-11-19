@@ -89,9 +89,9 @@ namespace _18_11_18_private {/*私有部分...*/
     public:
         using sstd_type_index_t = ExportRegisterClassInformation::sstd_type_index_t;
         using static_cast_map = ExportRegisterClassInformation::static_cast_map;
-        static const int class_deepth/*继承树的深度*/;
-        static const sstd_type_index_t class_index/*当前类的type_index*/;
-        static const static_cast_map * class_up_cast_map/*向上类型转换表*/;
+        static const int sstd_m_class_deepth/*继承树的深度*/;
+        static const sstd_type_index_t sstd_m_class_index/*当前类的type_index*/;
+        static const static_cast_map * sstd_m_class_up_cast_map/*向上类型转换表*/;
     private:
         inline static int register_class_depth();
         inline static sstd_type_index_t register_class_index();
@@ -99,15 +99,15 @@ namespace _18_11_18_private {/*私有部分...*/
     };
 
     template<typename T>
-    const int sstd_register_class_information<T>::class_deepth =
+    const int sstd_register_class_information<T>::sstd_m_class_deepth =
         sstd_register_class_information<T>::register_class_depth();
 
     template<typename T>
-    const typename sstd_register_class_information<T>::sstd_type_index_t sstd_register_class_information<T>::class_index =
+    const typename sstd_register_class_information<T>::sstd_type_index_t sstd_register_class_information<T>::sstd_m_class_index =
         sstd_register_class_information<T>::register_class_index();
 
     template<typename T>
-    const typename sstd_register_class_information<T>::static_cast_map * sstd_register_class_information<T>::class_up_cast_map =
+    const typename sstd_register_class_information<T>::static_cast_map * sstd_register_class_information<T>::sstd_m_class_up_cast_map =
         sstd_register_class_information<T>::register_static_up_cast_map();
 
     template<typename T>
@@ -144,13 +144,13 @@ public:
     using sstd_type_index_t = typename sstd_super_type::sstd_type_index_t;
     using sstd_type_up_cast_map = typename sstd_super_type::static_cast_map;
     static inline const int & get_class_deepth() {
-        return sstd_super_type::class_deepth;
+        return sstd_super_type::sstd_m_class_deepth;
     }
     static inline const sstd_type_index_t & get_class_index() {
-        return sstd_super_type::class_index;
+        return sstd_super_type::sstd_m_class_index;
     }
     static inline const sstd_type_up_cast_map * get_class_up_cast_map() {
-        return sstd_super_type::class_up_cast_map;
+        return sstd_super_type::sstd_m_class_up_cast_map;
     }
 };
 

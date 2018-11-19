@@ -1,5 +1,6 @@
 ﻿#include "sstd_type_traits.hpp"
 #include "sstd_register_class_information.hpp"
+#include "sstd_virtual_basic.hpp"
 #include <tuple>
 
 void test_sstd_type_traints() {
@@ -64,25 +65,42 @@ void test_sstd_type_traints() {
 }
 
 class A {
+public:
+    virtual ~A() {
+    }
 };
 
 class B : public A {
+public:
+    virtual ~B() {
+    }
 };
 
 class C : public B {
+public:
+    virtual ~C() {
+    }
 };
 
 class D {
+public:
+    virtual ~D() {
+    }
 };
 
 class E {
+public:
+    virtual ~E() {
+    }
 };
 
-class F : public D, public E {
+class F : virtual public D, public E {
+public:
+    virtual ~F() {
+    }
 };
 
-class G : public C, public F {
-};
+class G;
 
 template<>
 class sstd_bases<A> {
@@ -126,7 +144,6 @@ public:
     using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
-
 template<>
 class sstd_bases<G> {
 public:
@@ -134,11 +151,29 @@ public:
     using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
+class G : public C, public F, SSTD_REGISTER_VIRTUAL_BASIC(G) {
+private:
+    SSTD_VIRTUAL_CLASS
+};
+
+#include <cassert>
+
 void test_supers() {
 
     static_assert(std::is_same_v< sstd_bases<B>::type, sstd::type_traits::class_wrap< A > >);
     static_assert(std::is_same_v< sstd_bases<C>::type, sstd::type_traits::class_wrap< B, A > >);
     static_assert(std::is_same_v< sstd_bases<G>::type, sstd::type_traits::class_wrap< C, F, B, E, D, A > >);
+
+    G * g = new G;
+    assert( static_cast<void*>(g) == g->sstd_get_this_pointer() );
+    g->sstd_create_named_object_in_this_class<int>("test1",12);
+    assert(*reinterpret_cast<int *>(g->sstd_find_named_object("test1"))==12);
+    assert(33 ==* g->sstd_create_object_in_this_class<int>(33));
+    assert( g->sstd_get_class_mutex() );
+    assert( g->sstd_get_super_objects_map() );
+    D * d = g;
+    assert( d == g->sstd_find_object( sstd_get_type_index<D>() ) );
+    assert( nullptr == g->sstd_find_object(sstd_get_type_index<int>()) );
 
 }
 

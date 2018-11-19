@@ -33,6 +33,7 @@ inline static std::size_t size_( const I<T ...> & ){
 #include <iostream>
 #include <type_traits>
 
+extern void test_supers();
 int main(int argc,char ** argv){
 
     QApplication varApp{ argc,argv };
@@ -44,6 +45,8 @@ int main(int argc,char ** argv){
    /*this should output 0*/
    std::cout <<  size_ ( std::tr2::bases< int >::type{} ) << std::endl ;
 #endif
+
+   test_supers();
 
    sstd_register_class_information<A> varRA;
    sstd_register_class_information<B> varRB;

@@ -175,7 +175,7 @@ class sstd_register_virtual_basic : private sstd_register_class_information<T> {
 protected:
     using sstd_type_index_t = sstd_virtual_basic::sstd_type_index_t;
     using sstd_super_t = sstd_register_class_information<T>;
-    using items_map_t = typename sstd_super_t::items_map_t;
+    using items_map_t = typename sstd_super_t::sstd_type_up_cast_map;
 protected:
     inline static const sstd_type_index_t & sstd_get_type_index() {
         using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t< T > >;
@@ -233,7 +233,7 @@ inline void * sstd_get_this_pointer() const override{ \
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_this_pointer(); \
 } \
-inline const auto * sstd_get_super_objects_map() const override { \
+inline const _18_11_18_private::ExportRegisterClassInformation::static_cast_map * sstd_get_super_objects_map() const override { \
     using sstd_this_type_ = std::remove_cv_t< \
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_super_objects_map(); \
