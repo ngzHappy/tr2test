@@ -24,6 +24,8 @@ namespace sstd {
         template<typename ... > class unique_cat;
         /*将tree展开成list*/
         template<typename > class tree_to_list;
+        /*删除每个元素的外包装*/
+        template<typename T> class remove_every_wrap;
         /*替换外包装*/
         template<typename A, template<typename ... >class B>class replace;
         template<
@@ -272,6 +274,36 @@ namespace sstd {
         public:
             using type = typename _private_helper::tree_to_list_helper< 0, _supers  >::type;
         };
+
+        namespace _private {
+            template<typename T>
+            class remove_wrap {
+            public:
+                using type = std::remove_cv_t< std::remove_reference_t< T > >;
+            };
+            template<template<typename> class W, typename T>
+            class remove_wrap<W<T>> {
+            public:
+                using type = std::remove_cv_t< std::remove_reference_t< T > >;
+            };
+        }/*_private*/
+
+        template<template<typename ...T> class A, typename ... AT >
+        class remove_every_wrap<A<AT ...>> {
+        public:
+            using type = class_wrap< typename _private::remove_wrap<AT>::type ... >;
+        };
+
+        template<template<typename ...> class A >
+        class remove_every_wrap<A<>> {
+        public:
+            using type = zero_void_type;
+        };
+
+        template<typename T>
+        using tree_to_list_t = typename remove_every_wrap<
+            typename tree_to_list<T>::type
+        >::type;
 
     }/*namespace type_traits*/
 }/*namespace sstd*/

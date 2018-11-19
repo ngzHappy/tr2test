@@ -1,4 +1,5 @@
 ﻿#include "sstd_type_traits.hpp"
+#include "register_class_information.hpp"
 #include <tuple>
 
 void test_sstd_type_traints() {
@@ -62,7 +63,42 @@ void test_sstd_type_traints() {
 
 }
 
+class A {
+};
 
+class B : public A {
+};
+
+class C : public B {
+};
+
+template<>
+class sstd_bases<A> {
+public:
+    using supers = sstd::type_traits::class_wrap<>;
+    using type = sstd::type_traits::tree_to_list< sstd_bases >::type ;
+};
+
+template<>
+class sstd_bases<B> {
+public:
+    using supers = sstd::type_traits::class_wrap< sstd_bases<A> >;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
+};
+
+template<>
+class sstd_bases<C> {
+public:
+    using supers = sstd::type_traits::class_wrap< sstd_bases<B> >;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases > ;
+};
+
+void test_supers() {
+
+    static_assert(std::is_same_v< sstd_bases<B>::type , sstd::type_traits::class_wrap< A > > ) ;
+    static_assert(std::is_same_v< sstd_bases<C>::type, sstd::type_traits::class_wrap< B, A > >);
+
+}
 
 
 
