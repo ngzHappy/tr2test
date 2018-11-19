@@ -82,10 +82,12 @@ protected:
     using private_object_t = _18_11_18_private::object;
 public:
     using sstd_type_index_t = sstd_type_index_t_1;
+    /*获得类的index_type*/
     template<typename T>
     inline static const sstd_type_index_t & get_sstd_type_index() noexcept {
         return _18_11_18_private::ExportRegisterClassInformation::ppp_get_type_index<T>();
     }
+    /*获得当前类的mutex，此函数线程安全*/
     std::shared_ptr< std::recursive_mutex > sstd_get_class_mutex() const noexcept /*此函数线程安全*/;
 private:
     using mutex_t_t = _18_11_18_private::object_wrap<std::shared_ptr< std::recursive_mutex >, private_object_t>;
@@ -109,13 +111,17 @@ public:
     inline sstd_virtual_basic * sstd_get_virtual_basic() const {
         return const_cast<sstd_virtual_basic *>(this);
     }
-    sstd_virtual_basic() noexcept;
-    void * sstd_find_object(const sstd_type_index_t & k) const;
+    /*获得static_cast函数*/
+    virtual void * sstd_find_object(const sstd_type_index_t & k) const;
+    /*在类内部创建对象*/
     template<typename T, typename ... U>
     inline T * sstd_create_object_in_this_class(U && ...);
+    /*在类内部创建命名对象*/
     template<typename T, typename ... U>
     inline T * sstd_create_named_object_in_this_class(std::string_view, U && ...);
+    /*查找命名对象*/
     void * sstd_find_named_object(const std::string_view &) const noexcept;
+    sstd_virtual_basic() noexcept;
 public:
     sstd_virtual_basic(const sstd_virtual_basic &) = delete;
     sstd_virtual_basic(sstd_virtual_basic&&) = delete;
@@ -195,7 +201,12 @@ protected:
             static_cast<const sstd_this_type_ *>(this))->sstd_get_virtual_basic();
     }
     inline void * sstd_find_object(const sstd_type_index_t & k) const {
-        return this->sstd_get_virtual_basic()->sstd_find_object(k);
+        auto varMap = this->sstd_get_super_objects_map();
+        auto varCastPos = varMap->find(k);
+        if (varCastPos == varMap->end()) {
+            return nullptr;
+        }
+        return (varCastPos->second)( this->sstd_get_this_pointer() );
     }
     template<typename T111, typename ... U>
     inline T111 * sstd_create_object_in_this_class(U && ...args) {
@@ -239,7 +250,7 @@ inline const _18_11_18_private::ExportRegisterClassInformation::static_cast_map 
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_super_objects_map(); \
 } \
-inline void * sstd_find_object(const sstd_type_index_t & k) const { \
+inline void * sstd_find_object(const sstd_type_index_t & k) const override { \
     using sstd_this_type_ = std::remove_cv_t< \
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_find_object(k); \
@@ -275,6 +286,6 @@ inline std::shared_ptr< std::recursive_mutex > sstd_get_class_mutex() const noex
         sstd_get_class_mutex(); \
 } \
 template<typename > \
-friend class ::sstd_register_virtual_basic;
+friend class /**/::sstd_register_virtual_basic;
 /***************************************************************/
 #endif
