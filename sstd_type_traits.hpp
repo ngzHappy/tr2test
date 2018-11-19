@@ -1,5 +1,6 @@
 ﻿#pragma once 
 
+#include <memory>
 #include <cstdint>
 #include <utility>
 #include <algorithm>
@@ -135,19 +136,36 @@ namespace sstd {
             using type = std::conditional_t<has_class<A<AT...>, B>::value, class_wrap<AT...>, class_wrap<AT..., B> >;
         };
 
-        template<template <typename ...> class  A, typename ... AT ,template<typename ...> class Z>
-        class unique_append<A<AT...>, Z<> > {
+        /*second is zero_void_type,but fist not*/
+        template<template <typename ...> class  A, typename AT0, typename ... AT >
+        class unique_append<A<AT0,AT...>, zero_void_type > {
         public:
-            using type = class_wrap<AT...>;
+            using type = class_wrap<AT0,AT...>;
         };
 
+        /*first is zero_void_type,but second not*/
+        template<template <typename ...> class  A, typename AT0, typename ... AT >
+        class unique_append<zero_void_type,A<AT0,AT...>> {
+        public:
+            using type = class_wrap<AT0,AT...>;
+        };
+
+        /*all zero_void_type ...*/
+        template<
+        > class unique_append<zero_void_type, zero_void_type> {
+        public:
+            using type = zero_void_type;
+        };
+
+        /*is same ...,but all not zero_void_type*/
         template<
             template <typename ...> class A,
             template <typename ...> class B,
+            typename AT0,
             typename ... AT
-        > class unique_append<A<AT...>, B<AT...>> {
+        > class unique_append<A<AT0,AT...>, B<AT0,AT...>> {
         public:
-            using type = class_wrap<AT...>;
+            using type = class_wrap<AT0,AT...>;
         };
 
         namespace _private {

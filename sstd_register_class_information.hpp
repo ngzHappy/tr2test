@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <map>
+#include <memory>
 #include <utility>
 #include <typeinfo>
 #include <typeindex>

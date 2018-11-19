@@ -160,9 +160,12 @@ private:
 
 void test_supers() {
 
+#if defined(NO_TR2_TYPE_TRAITS)
     static_assert(std::is_same_v< sstd_bases<B>::type, sstd::type_traits::class_wrap< A > >);
     static_assert(std::is_same_v< sstd_bases<C>::type, sstd::type_traits::class_wrap< B, A > >);
     static_assert(std::is_same_v< sstd_bases<G>::type, sstd::type_traits::class_wrap< C, F, B, E, D, A > >);
+#else
+#endif
 
     G * g = new G;
     assert( static_cast<void*>(g) == g->sstd_get_this_pointer() );

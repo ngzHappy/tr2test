@@ -5,6 +5,7 @@
 #include <mutex>
 #include <atomic>
 #include <string>
+#include <memory>
 #include <utility>
 #include <cstddef>
 #include <cstdint>
@@ -221,7 +222,7 @@ protected:
 #endif
 
 #ifndef SSTD_VIRTUAL_CLASS
-#define SSTD_VIRTUAL_CLASS public: \
+#define SSTD_VIRTUAL_CLASS public : \
 using sstd_type_index_t = sstd_virtual_basic::sstd_type_index_t; \
 inline const sstd_type_index_t & sstd_get_type_index() const override { \
     using sstd_this_type_ = std::remove_cv_t< \
@@ -272,6 +273,8 @@ inline std::shared_ptr< std::recursive_mutex > sstd_get_class_mutex() const noex
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>:: \
         sstd_get_class_mutex(); \
-}
+} \
+template<typename > \
+friend class ::sstd_register_virtual_basic;
 /***************************************************************/
 #endif
