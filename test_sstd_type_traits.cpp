@@ -51,8 +51,8 @@ void test_sstd_type_traints() {
         using t1 = std::tuple<int>;
         using t2 = std::tuple<double>;
         using t3 = sstd::type_traits::zero_void_type;
-        using ta = sstd::type_traits::cat<t2,t3,t1>::type ;
-        static_assert(std::is_same_v<ta,sstd::type_traits::class_wrap<double,int>>);
+        using ta = sstd::type_traits::cat<t2, t3, t1>::type;
+        static_assert(std::is_same_v<ta, sstd::type_traits::class_wrap<double, int>>);
     }
 
     {
@@ -72,11 +72,23 @@ class B : public A {
 class C : public B {
 };
 
+class D {
+};
+
+class E {
+};
+
+class F : public D, public E {
+};
+
+class G : public C, public F {
+};
+
 template<>
 class sstd_bases<A> {
 public:
     using supers = sstd::type_traits::class_wrap<>;
-    using type = sstd::type_traits::tree_to_list< sstd_bases >::type ;
+    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
 };
 
 template<>
@@ -90,14 +102,43 @@ template<>
 class sstd_bases<C> {
 public:
     using supers = sstd::type_traits::class_wrap< sstd_bases<B> >;
-    using type = sstd::type_traits::tree_to_list_t< sstd_bases > ;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
+};
+
+template<>
+class sstd_bases<D> {
+public:
+    using supers = sstd::type_traits::class_wrap<>;
+    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+};
+
+template<>
+class sstd_bases<E> {
+public:
+    using supers = sstd::type_traits::class_wrap<>;
+    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+};
+
+template<>
+class sstd_bases<F> {
+public:
+    using supers = sstd::type_traits::class_wrap< sstd_bases<E>, sstd_bases<D> >;
+    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+};
+
+
+template<>
+class sstd_bases<G> {
+public:
+    using supers = sstd::type_traits::class_wrap< sstd_bases<C>, sstd_bases<F> >;
+    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
 };
 
 void test_supers() {
 
-    static_assert(std::is_same_v< sstd_bases<B>::type , sstd::type_traits::class_wrap< A > > ) ;
+    static_assert(std::is_same_v< sstd_bases<B>::type, sstd::type_traits::class_wrap< A > >);
     static_assert(std::is_same_v< sstd_bases<C>::type, sstd::type_traits::class_wrap< B, A > >);
-
+    static_assert(std::is_same_v< sstd_bases<G>::type, sstd::type_traits::class_wrap< C, F, B, E, D, A > >);
 }
 
 
