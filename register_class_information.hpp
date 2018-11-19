@@ -25,13 +25,15 @@ public:
 #else
 template<typename T>
 class sstd_bases{
+    using _000_type = typename std::tr2::bases<T>::type;
+    using _001_type = typename sstd::type_traits::replace<_000_type, sstd::type_traits::class_wrap>::type;
 public:
-    using type = typename std::tr2::bases<T>::type ;
+    using type = _001_type ;
 };
 #endif
 
 namespace _18_11_18_private {
-
+    
     template<typename K, typename T>
     using map = std::map<K, T>;
 

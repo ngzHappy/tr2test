@@ -116,8 +116,8 @@ namespace sstd {
             const constexpr static bool value = std::is_same_v<AT, B>;
         };
 
-        template<typename B>
-        class has_class< zero_void_type, B > {
+        template<template<typename ...> class T, typename B>
+        class has_class< T<> , B > {
         public:
             const constexpr static bool value = false;
         };
@@ -135,8 +135,8 @@ namespace sstd {
             using type = std::conditional_t<has_class<A<AT...>, B>::value, class_wrap<AT...>, class_wrap<AT..., B> >;
         };
 
-        template<template <typename ...> class  A, typename ... AT >
-        class unique_append<A<AT...>, zero_void_type> {
+        template<template <typename ...> class  A, typename ... AT ,template<typename ...> class Z>
+        class unique_append<A<AT...>, Z<> > {
         public:
             using type = class_wrap<AT...>;
         };
