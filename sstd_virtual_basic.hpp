@@ -286,6 +286,6 @@ inline std::shared_ptr< std::recursive_mutex > sstd_get_class_mutex() const noex
         sstd_get_class_mutex(); \
 } \
 template<typename > \
-friend class /**/::sstd_register_virtual_basic;
+friend class sstdg::sstd_register_virtual_basic;
 /***************************************************************/
 #endif

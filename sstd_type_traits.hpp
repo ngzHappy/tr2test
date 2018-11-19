@@ -6,6 +6,10 @@
 #include <algorithm>
 #include <type_traits>
 
+#ifndef sstdg
+#define sstdg /*global namespace*/
+#endif
+
 namespace sstd {
     namespace type_traits {
 
