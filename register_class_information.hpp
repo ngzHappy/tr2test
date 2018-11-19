@@ -32,7 +32,7 @@ public:
 };
 #endif
 
-namespace _18_11_18_private {
+namespace _18_11_18_private {/*私有部分...*/
     
     template<typename K, typename T>
     using map = std::map<K, T>;
@@ -81,7 +81,7 @@ namespace _18_11_18_private {
     };
 
     template<typename T>
-    class RegisterClassInformation : private ExportRegisterClassInformation {
+    class sstd_register_class_information : private ExportRegisterClassInformation {
     public:
         using type_index = ExportRegisterClassInformation::type_index;
         using static_cast_map = ExportRegisterClassInformation::static_cast_map;
@@ -95,36 +95,36 @@ namespace _18_11_18_private {
     };
 
     template<typename T>
-    const int RegisterClassInformation<T>::class_deepth =
-        RegisterClassInformation<T>::register_class_depth();
+    const int sstd_register_class_information<T>::class_deepth =
+        sstd_register_class_information<T>::register_class_depth();
 
     template<typename T>
-    const typename RegisterClassInformation<T>::type_index RegisterClassInformation<T>::class_index =
-        RegisterClassInformation<T>::register_class_index();
+    const typename sstd_register_class_information<T>::type_index sstd_register_class_information<T>::class_index =
+        sstd_register_class_information<T>::register_class_index();
 
     template<typename T>
-    const typename RegisterClassInformation<T>::static_cast_map * RegisterClassInformation<T>::class_up_cast_map =
-        RegisterClassInformation<T>::register_static_up_cast_map();
+    const typename sstd_register_class_information<T>::static_cast_map * sstd_register_class_information<T>::class_up_cast_map =
+        sstd_register_class_information<T>::register_static_up_cast_map();
 
     template<typename T>
-    inline int RegisterClassInformation<T>::register_class_depth() {
+    inline int sstd_register_class_information<T>::register_class_depth() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
         return static_cast<int>(ppp_class_size( typename sstd_bases<this_class_type_>::type{} ));
     }
 
     template<typename T>
-    inline const typename RegisterClassInformation<T>::static_cast_map * RegisterClassInformation<T>::register_static_up_cast_map() {
+    inline const typename sstd_register_class_information<T>::static_cast_map * sstd_register_class_information<T>::register_static_up_cast_map() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
         static_cast_map varUpCastMap;
         ppp_create_class_up_cast<this_class_type_>(&varUpCastMap,
                                                    typename sstd_bases<this_class_type_>::type{});
-        return RegisterClassInformation::register_up_cast_map(
-            RegisterClassInformation::register_class_index(),
+        return sstd_register_class_information::register_up_cast_map(
+            sstd_register_class_information::register_class_index(),
             std::move(varUpCastMap));
     }
 
     template<typename T>
-    inline typename RegisterClassInformation<T>::type_index RegisterClassInformation<T>::register_class_index() {
+    inline typename sstd_register_class_information<T>::type_index sstd_register_class_information<T>::register_class_index() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
         return ppp_get_type_index< this_class_type_ >();
     }
@@ -132,21 +132,21 @@ namespace _18_11_18_private {
 }/*namespace _18_11_18_private*/
 
 template<typename T>
-class RegisterClassInformation : private _18_11_18_private::RegisterClassInformation<
+class sstd_register_class_information : private _18_11_18_private::sstd_register_class_information<
     std::remove_cv_t< std::remove_reference_t<T> > > {
-    using super_type = _18_11_18_private::RegisterClassInformation<
+    using sstd_super_type = _18_11_18_private::sstd_register_class_information<
         std::remove_cv_t< std::remove_reference_t<T> > >;
 public:
-    using type_index = typename super_type::type_index;
-    using type_up_cast_map = typename super_type::static_cast_map;
+    using type_index = typename sstd_super_type::type_index;
+    using sstd_type_up_cast_map = typename sstd_super_type::static_cast_map;
     static inline const int & get_class_deepth() {
-        return super_type::class_deepth;
+        return sstd_super_type::class_deepth;
     }
     static inline const type_index & get_class_index() {
-        return super_type::class_index;
+        return sstd_super_type::class_index;
     }
-    static inline const type_up_cast_map * get_class_up_cast_map() {
-        return super_type::class_up_cast_map;
+    static inline const sstd_type_up_cast_map * get_class_up_cast_map() {
+        return sstd_super_type::class_up_cast_map;
     }
 };
 
@@ -171,8 +171,8 @@ static inline To * dynamic_class_pointer_cast(From * arg){
     }
     using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t<From> >;
     static_assert( true == std::is_polymorphic_v<sstd_this_type_> ,"From must have virtual function" );
-    const static RegisterClassInformation<To> varToInformation/*force create to class information */;
-    const static RegisterClassInformation<sstd_this_type_> varFromInformation/*force create from class information*/;
+    const static sstd_register_class_information<To> varToInformation/*force create to class information */;
+    const static sstd_register_class_information<sstd_this_type_> varFromInformation/*force create from class information*/;
     auto varCastMap = get_dynamic_class_up_cast_map( arg );
     if(varCastMap == nullptr){
         return nullptr;

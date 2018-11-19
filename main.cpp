@@ -19,7 +19,7 @@ class B :
         private P ,
         public C,
         public virtual A ,
-        private RegisterClassInformation<B>
+        private sstd_register_class_information<B>
 {};
 
 class M{
@@ -45,9 +45,9 @@ int main(int argc,char ** argv){
    std::cout <<  size_ ( std::tr2::bases< int >::type{} ) << std::endl ;
 #endif
 
-   RegisterClassInformation<A> varRA;
-   RegisterClassInformation<B> varRB;
-   RegisterClassInformation<M> varRM;
+   sstd_register_class_information<A> varRA;
+   sstd_register_class_information<B> varRB;
+   sstd_register_class_information<M> varRM;
    /*this should output */
    std::cout << "class deepth : " << varRB.get_class_deepth() << std::endl ;
    /*this should output true*/

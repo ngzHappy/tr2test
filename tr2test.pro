@@ -27,6 +27,9 @@ SOURCES += $$PWD/main.cpp
 SOURCES += $$PWD/test_sstd_type_traits.cpp
 HEADERS += $$PWD/sstd_type_traits.hpp
 
+SOURCES += $$PWD/sstd_virtual_basic.cpp
+HEADERS += $$PWD/sstd_virtual_basic.hpp
+
 QT += core
 QT += gui
 QT += widgets
