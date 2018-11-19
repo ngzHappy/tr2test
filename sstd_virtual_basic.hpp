@@ -13,17 +13,16 @@
 #include <type_traits>
 #include <string_view>
 #include <forward_list>
-#include "register_class_information.hpp"
+#include "sstd_register_class_information.hpp"
 
-namespace _01_00_pstdv {
+namespace _18_11_18_private {
+    /*分配内存的容器...*/
     using string = std::string;
     template<typename T>
     using forward_list = std::forward_list<T>;
-    template<typename K, typename T>
-    using map = std::map<K, T>;
     template<typename K>
     using set = std::set<K>;
-
+    /*将对象包装成一object或者named_object*/
     template<typename T, typename U>
     class alignas((alignof(T) > alignof(void *)) ? alignof(T) : alignof(void *)) object_wrap final : public U{
         T mmm_data;
@@ -63,7 +62,7 @@ namespace _01_00_pstdv {
         object() noexcept;
     };
     class named_object : public object {
-        using string_type = object_wrap<_01_00_pstdv::string, object>;
+        using string_type = object_wrap<_18_11_18_private::string, object>;
         string_type * mmm_name{ nullptr };
     public:
         named_object() noexcept;
@@ -77,50 +76,45 @@ template<typename T>
 class sstd_register_virtual_basic;
 class sstd_virtual_basic {
 protected:
-    using type_index_t = std::type_index;
-    using private_object_t = _01_00_pstdv::object;
+    using sstd_type_index_t_1 = _18_11_18_private::ExportRegisterClassInformation::sstd_type_index_t;
+    using type_index_t = sstd_type_index_t_1::second_type;
+    using private_object_t = _18_11_18_private::object;
 public:
-    using sstd_type_index = std::pair<std::size_t, type_index_t>;
+    using sstd_type_index_t = sstd_type_index_t_1;
     template<typename T>
-    inline static const sstd_type_index & get_sstd_type_index() noexcept {
-        using sstd_this_type_ = std::remove_cv_t<
-            std::remove_reference_t<T> >;
-        const static sstd_type_index varAns = []() {
-            type_index_t varIndex_{ typeid(sstd_this_type_) };
-            std::hash< type_index_t > varHash_;
-            return sstd_type_index{ varHash_(varIndex_),varIndex_ };
-        }();
-        return varAns;
+    inline static const sstd_type_index_t & get_sstd_type_index() noexcept {
+        return _18_11_18_private::ExportRegisterClassInformation::ppp_get_type_index<T>();
     }
     std::shared_ptr< std::recursive_mutex > sstd_get_class_mutex() const noexcept /*此函数线程安全*/;
 private:
-    using mutex_t_t = _01_00_pstdv::object_wrap<std::shared_ptr< std::recursive_mutex >, private_object_t>;
-    using maped_named_objects_t = _01_00_pstdv::map< std::string_view, private_object_t * >;
-    using mmm_objects_in_this_t = _01_00_pstdv::forward_list< std::unique_ptr< private_object_t > >;
-    using maped_named_objects_t_t = _01_00_pstdv::object_wrap<maped_named_objects_t, private_object_t>;
-    using mmm_objects_in_this_t_t = _01_00_pstdv::object_wrap<mmm_objects_in_this_t, private_object_t>;
-    using items_map_t = _01_00_pstdv::map< sstd_type_index, void * >;
-    using items_map_t_t = _01_00_pstdv::object_wrap<items_map_t, private_object_t>;
-    items_map_t_t * mmm_objects/*用于存储地址不同的对象*/;
+    using mutex_t_t = _18_11_18_private::object_wrap<std::shared_ptr< std::recursive_mutex >, private_object_t>;
+    using maped_named_objects_t = _18_11_18_private::map< std::string_view, private_object_t * >;
+    using mmm_objects_in_this_t = _18_11_18_private::forward_list< std::unique_ptr< private_object_t > >;
+    using maped_named_objects_t_t = _18_11_18_private::object_wrap<maped_named_objects_t, private_object_t>;
+    using mmm_objects_in_this_t_t = _18_11_18_private::object_wrap<mmm_objects_in_this_t, private_object_t>;
+    using items_map_t = _18_11_18_private::ExportRegisterClassInformation::static_cast_map;
     maped_named_objects_t_t * mmm_named_objects{ nullptr }/*用于存储命名动态对象*/;
     mmm_objects_in_this_t_t * mmm_objects_in_this{ nullptr }/*用于存储动态对象*/;
     mutable std::atomic< mutex_t_t * > mmm_mutex{ nullptr }/*用于存储一个mutex*/;
-    void sstd_compress_this();
 public:
     virtual ~sstd_virtual_basic();
-    virtual const sstd_type_index & sstd_get_type_index() const;
+    /*获得当前对象的ID*/
+    virtual const sstd_type_index_t & sstd_get_type_index() const = 0;
+    /*获得当前对象向上转换函数表*/
+    virtual const items_map_t * sstd_get_super_objects_map() const = 0;
+    /*获得当前对象指针*/
+    virtual void * sstd_get_this_pointer() const = 0;
+    /*获得virtual_basic对象指针*/
     inline sstd_virtual_basic * sstd_get_virtual_basic() const {
         return const_cast<sstd_virtual_basic *>(this);
     }
     sstd_virtual_basic() noexcept;
-    void * sstd_find_object(const sstd_type_index & k) const;
+    void * sstd_find_object(const sstd_type_index_t & k) const;
     template<typename T, typename ... U>
     inline T * sstd_create_object_in_this_class(U && ...);
     template<typename T, typename ... U>
     inline T * sstd_create_named_object_in_this_class(std::string_view, U && ...);
     void * sstd_find_named_object(const std::string_view &) const noexcept;
-protected:
-    void sstd_add_object_cast(const sstd_type_index & k, void * v);
 public:
     sstd_virtual_basic(const sstd_virtual_basic &) = delete;
     sstd_virtual_basic(sstd_virtual_basic&&) = delete;
@@ -139,8 +133,8 @@ private:
 template<typename T, typename ... U>
 inline T * sstd_virtual_basic::sstd_create_object_in_this_class(U && ...args) {
     using sstd_this_type_1 = std::remove_cv_t< T >;
-    using sstd_this_object_1 = _01_00_pstdv::object;
-    using sstd_this_wrap_1 = _01_00_pstdv::object_wrap<sstd_this_type_1, sstd_this_object_1>;
+    using sstd_this_object_1 = _18_11_18_private::object;
+    using sstd_this_wrap_1 = _18_11_18_private::object_wrap<sstd_this_type_1, sstd_this_object_1>;
     std::unique_ptr varAnsUnique = std::make_unique<sstd_this_wrap_1>(std::forward<U>(args)...);
     auto varAns = reinterpret_cast<T *>(varAnsUnique->get_data());
     this->insert_object(std::move(varAnsUnique));
@@ -150,8 +144,8 @@ inline T * sstd_virtual_basic::sstd_create_object_in_this_class(U && ...args) {
 template<typename T, typename ... U>
 inline T * sstd_virtual_basic::sstd_create_named_object_in_this_class(std::string_view name, U && ... args) {
     using sstd_this_type_1 = std::remove_cv_t< T >;
-    using sstd_this_object_1 = _01_00_pstdv::named_object;
-    using sstd_this_wrap_1 = _01_00_pstdv::object_wrap<sstd_this_type_1, sstd_this_object_1>;
+    using sstd_this_object_1 = _18_11_18_private::named_object;
+    using sstd_this_wrap_1 = _18_11_18_private::object_wrap<sstd_this_type_1, sstd_this_object_1>;
     std::unique_ptr varAnsUnique = std::make_unique<sstd_this_wrap_1>(std::forward<U>(args)...);
     auto varAns = reinterpret_cast<T *>(varAnsUnique->get_data());
     varAnsUnique->set_name(name);
@@ -162,7 +156,7 @@ inline T * sstd_virtual_basic::sstd_create_named_object_in_this_class(std::strin
 
 /*typeid*/
 template<typename T>
-inline static const sstd_virtual_basic::sstd_type_index & sstd_get_type_index() noexcept {
+inline static const sstd_virtual_basic::sstd_type_index_t & sstd_get_type_index() noexcept {
     return sstd_virtual_basic::get_sstd_type_index<T>();
 }
 
@@ -177,27 +171,30 @@ inline static T * sstd_find_object(const U & arg) {
 }
 
 template<typename T>
-class sstd_register_virtual_basic {
-    using sstd_type_index = sstd_virtual_basic::sstd_type_index;
+class sstd_register_virtual_basic : private sstd_register_class_information<T> {
 protected:
-    inline static const sstd_type_index & sstd_get_type_index() {
+    using sstd_type_index_t = sstd_virtual_basic::sstd_type_index_t;
+    using sstd_super_t = sstd_register_class_information<T>;
+    using items_map_t = typename sstd_super_t::items_map_t;
+protected:
+    inline static const sstd_type_index_t & sstd_get_type_index() {
         using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t< T > >;
         return sstd_virtual_basic::get_sstd_type_index<sstd_this_type_>();
     }
-    inline sstd_register_virtual_basic() {
+    inline const static items_map_t * sstd_get_super_objects_map() {
+        return sstd_super_t::get_class_up_cast_map();
+    }
+    inline void * sstd_get_this_pointer() const {
         using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t< T > >;
-        this->sstd_add_object_cast(this->sstd_get_type_index(), static_cast<sstd_this_type_ *>(this));
+        return const_cast<sstd_this_type_*>( static_cast<const sstd_this_type_ *>(this) );
     }
     inline sstd_virtual_basic * sstd_get_virtual_basic() const {
         using sstd_this_type_ = std::remove_cv_t< std::remove_reference_t< T > >;
         return static_cast<const sstd_virtual_basic *>(
             static_cast<const sstd_this_type_ *>(this))->sstd_get_virtual_basic();
     }
-    inline void * sstd_find_object(const sstd_type_index & k) const {
+    inline void * sstd_find_object(const sstd_type_index_t & k) const {
         return this->sstd_get_virtual_basic()->sstd_find_object(k);
-    }
-    inline void sstd_add_object_cast(const sstd_type_index & k, void * v) {
-        return this->sstd_get_virtual_basic()->sstd_add_object_cast(k, v);
     }
     template<typename T111, typename ... U>
     inline T111 * sstd_create_object_in_this_class(U && ...args) {
@@ -218,17 +215,6 @@ protected:
     }
 };
 
-template<typename T>
-class sstd_register_compress_virtual_basic {
-};
-
-template<typename T>
-class sstd_register_virtual_basic<sstd_register_compress_virtual_basic<T>> {
-public:
-    sstd_register_virtual_basic() {
-    }
-};
-
 #ifndef SSTD_REGISTER_VIRTUAL_BASIC
 #define SSTD_REGISTER_VIRTUAL_BASIC(_B_) private sstd_register_virtual_basic<_B_>,\
     public virtual sstd_virtual_basic
@@ -236,13 +222,23 @@ public:
 
 #ifndef SSTD_VIRTUAL_CLASS
 #define SSTD_VIRTUAL_CLASS public: \
-using sstd_type_index = sstd_virtual_basic::sstd_type_index; \
-inline const sstd_type_index & sstd_get_type_index() const override { \
+using sstd_type_index_t = sstd_virtual_basic::sstd_type_index_t; \
+inline const sstd_type_index_t & sstd_get_type_index() const override { \
     using sstd_this_type_ = std::remove_cv_t< \
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_type_index(); \
 } \
-inline void * sstd_find_object(const sstd_type_index & k) const { \
+inline void * sstd_get_this_pointer() const override{ \
+    using sstd_this_type_ = std::remove_cv_t< \
+        std::remove_reference_t< decltype(*this) > >; \
+    return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_this_pointer(); \
+} \
+inline const auto * sstd_get_super_objects_map() const override { \
+    using sstd_this_type_ = std::remove_cv_t< \
+        std::remove_reference_t< decltype(*this) > >; \
+    return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_super_objects_map(); \
+} \
+inline void * sstd_find_object(const sstd_type_index_t & k) const { \
     using sstd_this_type_ = std::remove_cv_t< \
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_find_object(k); \
@@ -252,13 +248,6 @@ inline sstd_virtual_basic * sstd_get_virtual_basic() const { \
         std::remove_reference_t< decltype(*this) > >; \
     return sstd_register_virtual_basic<sstd_this_type_>::sstd_get_virtual_basic(); \
 } \
-protected: \
-inline void sstd_add_object_cast(const sstd_type_index & k, void * v) { \
-    using sstd_this_type_ = std::remove_cv_t< \
-        std::remove_reference_t< decltype(*this) > >; \
-    return sstd_register_virtual_basic<sstd_this_type_>::sstd_add_object_cast(k, v); \
-} \
-public: \
 inline void * sstd_find_named_object(const std::string_view & name) const { \
 using sstd_this_type_ = std::remove_cv_t< \
     std::remove_reference_t< decltype(*this) > >; \

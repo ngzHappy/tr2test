@@ -19,8 +19,8 @@ TARGET = test_tr2
 
 TEMPLATE = app
 
-SOURCES += $$PWD/register_class_information.cpp
-HEADERS += $$PWD/register_class_information.hpp
+SOURCES += $$PWD/sstd_register_class_information.cpp
+HEADERS += $$PWD/sstd_register_class_information.hpp
 
 SOURCES += $$PWD/main.cpp
 

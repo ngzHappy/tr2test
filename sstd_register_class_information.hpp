@@ -39,22 +39,26 @@ namespace _18_11_18_private {/*私有部分...*/
 
     class ExportRegisterClassInformation {
     public:
-        using sstd_type_index = std::pair<std::size_t, std::type_index>;
+        using sstd_type_index_t = std::pair<std::size_t, std::type_index>;
         typedef void*(*static_type_cast_function)(void *);
-        using static_cast_map = map<sstd_type_index, static_type_cast_function>;
-        static const static_cast_map * register_up_cast_map(const sstd_type_index &, static_cast_map &&);
-        static const static_cast_map * find_up_cast_map(const sstd_type_index &);
-    protected:
+        using static_cast_map = map<sstd_type_index_t, static_type_cast_function>;
+        static const static_cast_map * register_up_cast_map(const sstd_type_index_t &, static_cast_map &&);
+        static const static_cast_map * find_up_cast_map(const sstd_type_index_t &);
+    public:
         template< template<typename ...> class I, typename ... T >
         inline static std::size_t ppp_class_size(const I<T ...> &) {
             return (sizeof...(T)) + 1 ;
         }
         template<typename U>
-        inline static sstd_type_index ppp_get_type_index() {
-            using this_class_type_ = std::remove_cv_t< std::remove_reference_t<U> >;
-            typename sstd_type_index::second_type varIndex{ typeid(this_class_type_) };
-            std::hash<typename sstd_type_index::second_type> varIndexHash;
-            return sstd_type_index{ varIndexHash(varIndex) ,varIndex };
+        inline static const sstd_type_index_t & ppp_get_type_index() {
+            using sstd_this_type_ = std::remove_cv_t<
+                std::remove_reference_t<U> >;
+            const static sstd_type_index_t varAns = []() {
+                sstd_type_index_t::second_type varIndex_{ typeid(sstd_this_type_) };
+                std::hash< sstd_type_index_t::second_type > varHash_;
+                return sstd_type_index_t{ varHash_(varIndex_),varIndex_ };
+            }();
+            return varAns;
         }
         template<typename From_,typename To_>
         inline static void ppp_insert_static_cast_function(static_cast_map * map){
@@ -83,14 +87,14 @@ namespace _18_11_18_private {/*私有部分...*/
     template<typename T>
     class sstd_register_class_information : private ExportRegisterClassInformation {
     public:
-        using sstd_type_index = ExportRegisterClassInformation::sstd_type_index;
+        using sstd_type_index_t = ExportRegisterClassInformation::sstd_type_index_t;
         using static_cast_map = ExportRegisterClassInformation::static_cast_map;
         static const int class_deepth/*继承树的深度*/;
-        static const sstd_type_index class_index/*当前类的type_index*/;
+        static const sstd_type_index_t class_index/*当前类的type_index*/;
         static const static_cast_map * class_up_cast_map/*向上类型转换表*/;
     private:
         inline static int register_class_depth();
-        inline static sstd_type_index register_class_index();
+        inline static sstd_type_index_t register_class_index();
         inline static const static_cast_map * register_static_up_cast_map();
     };
 
@@ -99,7 +103,7 @@ namespace _18_11_18_private {/*私有部分...*/
         sstd_register_class_information<T>::register_class_depth();
 
     template<typename T>
-    const typename sstd_register_class_information<T>::sstd_type_index sstd_register_class_information<T>::class_index =
+    const typename sstd_register_class_information<T>::sstd_type_index_t sstd_register_class_information<T>::class_index =
         sstd_register_class_information<T>::register_class_index();
 
     template<typename T>
@@ -124,7 +128,7 @@ namespace _18_11_18_private {/*私有部分...*/
     }
 
     template<typename T>
-    inline typename sstd_register_class_information<T>::sstd_type_index sstd_register_class_information<T>::register_class_index() {
+    inline typename sstd_register_class_information<T>::sstd_type_index_t sstd_register_class_information<T>::register_class_index() {
         using this_class_type_ = std::remove_cv_t< std::remove_reference_t<T> >;
         return ppp_get_type_index< this_class_type_ >();
     }
@@ -137,12 +141,12 @@ class sstd_register_class_information : private _18_11_18_private::sstd_register
     using sstd_super_type = _18_11_18_private::sstd_register_class_information<
         std::remove_cv_t< std::remove_reference_t<T> > >;
 public:
-    using sstd_type_index = typename sstd_super_type::sstd_type_index;
+    using sstd_type_index_t = typename sstd_super_type::sstd_type_index_t;
     using sstd_type_up_cast_map = typename sstd_super_type::static_cast_map;
     static inline const int & get_class_deepth() {
         return sstd_super_type::class_deepth;
     }
-    static inline const sstd_type_index & get_class_index() {
+    static inline const sstd_type_index_t & get_class_index() {
         return sstd_super_type::class_index;
     }
     static inline const sstd_type_up_cast_map * get_class_up_cast_map() {

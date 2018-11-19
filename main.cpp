@@ -1,4 +1,4 @@
-﻿#include "register_class_information.hpp"
+﻿#include "sstd_register_class_information.hpp"
 
 #include <QtWidgets/qapplication.h>
 #include <QtWidgets/qwidget.h>

@@ -1,5 +1,5 @@
 ﻿#include "sstd_type_traits.hpp"
-#include "register_class_information.hpp"
+#include "sstd_register_class_information.hpp"
 #include <tuple>
 
 void test_sstd_type_traints() {

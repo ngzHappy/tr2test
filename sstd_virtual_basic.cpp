@@ -3,36 +3,37 @@
 #include <unordered_map>
 #include <shared_mutex>
 
-const sstd_virtual_basic::sstd_type_index & sstd_virtual_basic::sstd_get_type_index() const {
+const sstd_virtual_basic::sstd_type_index_t & sstd_virtual_basic::sstd_get_type_index() const {
     using sstd_this_type_ = std::remove_cv_t<
         std::remove_reference_t< decltype(*this) > >;
     return ::sstd_get_type_index<sstd_this_type_>();
 }
 
+void * sstd_virtual_basic::sstd_get_this_pointer() const {
+    return nullptr;
+}
+
+const sstd_virtual_basic::items_map_t * sstd_virtual_basic::sstd_get_super_objects_map() const {
+    return nullptr;
+}
+
 sstd_virtual_basic::sstd_virtual_basic() noexcept {
-    mmm_objects = new items_map_t_t;
-    sstd_add_object_cast(this->sstd_get_type_index(), this);
 }
 
 sstd_virtual_basic::~sstd_virtual_basic() {
     destory_objects_in_this();
     delete mmm_named_objects;
     delete mmm_objects_in_this;
-    delete mmm_objects;
     delete mmm_mutex.load();
 }
 
-void sstd_virtual_basic::sstd_add_object_cast(const sstd_type_index & k, void * v) {
-    mmm_objects->get_type_data()->emplace(k, v);
-}
-
-void * sstd_virtual_basic::sstd_find_object(const sstd_type_index & k) const {
-    const auto & varMap = std::as_const(*(mmm_objects->get_type_data()));
-    auto varPos = varMap.find(k);
-    if (varPos == varMap.end()) {
+void * sstd_virtual_basic::sstd_find_object(const sstd_type_index_t & k) const {
+    auto varMap = sstd_get_super_objects_map();
+    auto varCastPos = varMap->find(k);
+    if (varCastPos == varMap->end()) {
         return nullptr;
     }
-    return varPos->second;
+    return (varCastPos->second)( this->sstd_get_this_pointer() );
 }
 
 sstd_virtual_basic::maped_named_objects_t * sstd_virtual_basic::get_named_objects() noexcept {
@@ -76,26 +77,26 @@ void * sstd_virtual_basic::sstd_find_named_object(const std::string_view &name) 
     return varPos->second->get_data();
 }
 
-void _01_00_pstdv::named_object::set_name(const std::string_view & name) {
+void _18_11_18_private::named_object::set_name(const std::string_view & name) {
     *(mmm_name->get_type_data()) = name;
 }
 
-std::string_view _01_00_pstdv::named_object::get_name() const {
+std::string_view _18_11_18_private::named_object::get_name() const {
     return *(mmm_name->get_type_data());
 }
 
-_01_00_pstdv::named_object::named_object() noexcept {
+_18_11_18_private::named_object::named_object() noexcept {
     mmm_name = new string_type;
 }
 
-_01_00_pstdv::named_object::~named_object() noexcept {
+_18_11_18_private::named_object::~named_object() noexcept {
     delete mmm_name;
 }
 
-_01_00_pstdv::object::~object() noexcept {
+_18_11_18_private::object::~object() noexcept {
 }
 
-_01_00_pstdv::object::object() noexcept {
+_18_11_18_private::object::object() noexcept {
 }
 
 std::shared_ptr< std::recursive_mutex > sstd_virtual_basic::sstd_get_class_mutex() const noexcept {
