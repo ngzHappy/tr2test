@@ -25,11 +25,11 @@ namespace sstd {
         /*将tree展开成list*/
         template<typename > class tree_to_list;
         /*替换外包装*/
-        template<typename A,template<typename ... >class B>class replace;
+        template<typename A, template<typename ... >class B>class replace;
         template<
-            template<typename ... >class A,typename ...AT ,
-            template<typename ... >class B 
-        > class replace<A<AT...>,B> {
+            template<typename ... >class A, typename ...AT,
+            template<typename ... >class B
+        > class replace<A<AT...>, B> {
         public:
             using type = B<AT ...>;
         };
@@ -143,10 +143,9 @@ namespace sstd {
             template <typename ...> class A,
             template <typename ...> class B,
             typename ... AT
-        >
-            class unique_append<A<AT...>, B<AT...>> {
-            public:
-                using type = class_wrap<AT...>;
+        > class unique_append<A<AT...>, B<AT...>> {
+        public:
+            using type = class_wrap<AT...>;
         };
 
         namespace _private {
@@ -228,7 +227,6 @@ namespace sstd {
             using type = typename unique<cat_type>::type;
         };
 
-
         namespace _private_helper {
 
             /*检查一个类型是否定义了 typename T::supers */
@@ -263,17 +261,17 @@ namespace sstd {
                     typename tree_to_list_helper< N + 1, TypeNext/*TreeToListHelper*/>::type/*TreeToListHelper*/;
             };
 
-            template<typename TName
-            >class tree_to_list {
-                using _supers = typename unique_cat<
-                    zero_void_type,
-                    typename _private_helper::has_supers_help<TName>::type
-                >::type;
-            public:
-                using type = typename _private_helper::tree_to_list_helper< 0, _supers  >::type;
-            };
-
         }/*_private_helper*/
+
+        template<typename TName
+        >class tree_to_list {
+            using _supers = typename unique_cat<
+                zero_void_type,
+                typename _private_helper::has_supers_help<TName>::type
+            >::type;
+        public:
+            using type = typename _private_helper::tree_to_list_helper< 0, _supers  >::type;
+        };
 
     }/*namespace type_traits*/
 }/*namespace sstd*/
