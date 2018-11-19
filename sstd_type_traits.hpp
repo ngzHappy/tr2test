@@ -181,6 +181,12 @@ namespace sstd {
             using type = class_wrap<T0>;
         };
 
+        template<template<typename...> class T>
+        class unique<T<>> {
+        public:
+            using type = zero_void_type;
+        };
+
         template<template<typename...> class T, typename T0, typename T1, typename ... TT>
         class unique<T<T0, T1, TT...>> {
         public:
@@ -254,7 +260,7 @@ namespace sstd {
 
             template<std::size_t N, typename TName
             >class tree_to_list_helper<N, TName, true > {
-                static_assert(N < 256, "this may be a error");
+                static_assert(N < (1024), "the tree element is too much!");
                 using TypeN = typename get_from_index<N, TName>::type/*get_from_index*/;
                 using TypeNSupers = typename has_supers_help</*HasSupers*/TypeN>::type/*HasSupers*/;
                 using TypeNext = typename unique_cat< TName, TypeNSupers/*unique_cat*/>::type/*unique_cat*/;

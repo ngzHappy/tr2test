@@ -88,7 +88,7 @@ template<>
 class sstd_bases<A> {
 public:
     using supers = sstd::type_traits::class_wrap<>;
-    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
 template<>
@@ -109,21 +109,21 @@ template<>
 class sstd_bases<D> {
 public:
     using supers = sstd::type_traits::class_wrap<>;
-    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
 template<>
 class sstd_bases<E> {
 public:
     using supers = sstd::type_traits::class_wrap<>;
-    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
 template<>
 class sstd_bases<F> {
 public:
     using supers = sstd::type_traits::class_wrap< sstd_bases<E>, sstd_bases<D> >;
-    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
 
@@ -131,7 +131,7 @@ template<>
 class sstd_bases<G> {
 public:
     using supers = sstd::type_traits::class_wrap< sstd_bases<C>, sstd_bases<F> >;
-    using type = sstd::type_traits::tree_to_list< sstd_bases >::type;
+    using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
 
 void test_supers() {
@@ -139,6 +139,7 @@ void test_supers() {
     static_assert(std::is_same_v< sstd_bases<B>::type, sstd::type_traits::class_wrap< A > >);
     static_assert(std::is_same_v< sstd_bases<C>::type, sstd::type_traits::class_wrap< B, A > >);
     static_assert(std::is_same_v< sstd_bases<G>::type, sstd::type_traits::class_wrap< C, F, B, E, D, A > >);
+
 }
 
 
