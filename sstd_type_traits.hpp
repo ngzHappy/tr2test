@@ -85,16 +85,6 @@ namespace sstd {
             constexpr const static bool has_second = false;
         };
 
-        template<>
-        class get_first< zero_void_type > {
-        public:
-            using first_type = zero_void_type;
-            using second_type = zero_void_type;
-            using tail = zero_void_type;
-            constexpr const static bool has_first = false;
-            constexpr const static bool has_second = false;
-        };
-
         template< template<typename ...> class A, typename ... AT  >
         class get_from_index<0, A<AT...>> {
         public:
@@ -130,6 +120,7 @@ namespace sstd {
             const constexpr static bool value = std::is_same_v<AT0, B> || has_class<tail, B>::value;
         };
 
+        /*all not zero_void_type*/
         template<template <typename ...> class  A, typename ... AT, typename B>
         class unique_append<A<AT...>, B> {
         public:
@@ -155,17 +146,6 @@ namespace sstd {
         > class unique_append<zero_void_type, zero_void_type> {
         public:
             using type = zero_void_type;
-        };
-
-        /*is same ...,but all not zero_void_type*/
-        template<
-            template <typename ...> class A,
-            template <typename ...> class B,
-            typename AT0,
-            typename ... AT
-        > class unique_append<A<AT0,AT...>, B<AT0,AT...>> {
-        public:
-            using type = class_wrap<AT0,AT...>;
         };
 
         namespace _private {
