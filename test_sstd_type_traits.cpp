@@ -102,6 +102,8 @@ public:
 
 class G;
 
+#if defined(NO_TR2_TYPE_TRAITS)
+
 template<>
 class sstd_bases<A> {
 public:
@@ -150,6 +152,8 @@ public:
     using supers = sstd::type_traits::class_wrap< sstd_bases<C>, sstd_bases<F> >;
     using type = sstd::type_traits::tree_to_list_t< sstd_bases >;
 };
+
+#endif
 
 class G : public C, public F, SSTD_REGISTER_VIRTUAL_BASIC(G) {
 private:
