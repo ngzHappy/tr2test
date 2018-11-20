@@ -161,6 +161,7 @@ private:
 };
 
 #include <cassert>
+#include <iostream>
 
 void test_supers() {
 
@@ -181,7 +182,7 @@ void test_supers() {
     D * d = g;
     assert( d == g->sstd_find_object( sstd_get_type_index<D>() ) );
     assert( nullptr == g->sstd_find_object(sstd_get_type_index<int>()) );
-
+    std::cout << "passed" <<std::endl ;
 }
 
 
