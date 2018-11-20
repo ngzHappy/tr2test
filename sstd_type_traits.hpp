@@ -131,25 +131,10 @@ namespace sstd {
             using type = std::conditional_t<has_class<A<AT...>, B>::value, class_wrap<AT...>, class_wrap<AT..., B> >;
         };
 
-        /*second is zero_void_type,but fist not*/
-        template<template <typename ...> class  A, typename AT0, typename ... AT >
-        class unique_append<A<AT0,AT...>, zero_void_type > {
+        template<template<typename ...> class A, typename ...AT>
+        class unique_append<A<AT...>, zero_void_type > {
         public:
-            using type = class_wrap<AT0,AT...>;
-        };
-
-        /*first is zero_void_type,but second not*/
-        template<template <typename ...> class  A, typename AT0, typename ... AT >
-        class unique_append<zero_void_type,A<AT0,AT...>> {
-        public:
-            using type = class_wrap<AT0,AT...>;
-        };
-
-        /*all zero_void_type ...*/
-        template<
-        > class unique_append<zero_void_type, zero_void_type> {
-        public:
-            using type = zero_void_type;
+            using type = class_wrap< AT ... >;
         };
 
         namespace _private {
