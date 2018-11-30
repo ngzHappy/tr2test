@@ -27,7 +27,7 @@ namespace _18_11_18_private {
             class type_index_hash_map {
                 using hash_map = std::unordered_map<
                     ExportRegisterClassInformation::sstd_type_index_t,
-                    class_information,
+                    std::shared_ptr< class_information >,
                     type_index_hash
                 >;
                 hash_map mmm_hash_map;
@@ -40,27 +40,28 @@ namespace _18_11_18_private {
                             std::shared_lock varReadLock{ mmm_mutex };
                             auto varPos = std::as_const(mmm_hash_map).find(key);
                             if (varPos != mmm_hash_map.end()) {
-                                return &(varPos->second);
+                                return varPos->second.get();
                             }
                         }
                         std::unique_lock varWriteLock{ mmm_mutex };
                         {/*try to find again ...*/
                             auto varPos = std::as_const(mmm_hash_map).find(key);
                             if (varPos != mmm_hash_map.end()) {
-                                return &(varPos->second);
+                                return varPos->second.get();
                             }
                         }
                         /*insert the data ...*/
-                        auto varPos = mmm_hash_map.emplace(key, std::move(up_cast_map));
-                        return &(varPos.first->second);
+                        auto varPos = mmm_hash_map.emplace(key,
+                            std::make_shared<class_information >(std::move(up_cast_map)));
+                        return varPos.first->second.get();
                 }
 
                 const class_information * find(
-                        const ExportRegisterClassInformation::sstd_type_index_t & key) {
+                    const ExportRegisterClassInformation::sstd_type_index_t & key) {
                     std::shared_lock varReadLock{ mmm_mutex };
                     auto varPos = std::as_const(mmm_hash_map).find(key);
                     if (varPos != mmm_hash_map.end()) {
-                        return &(varPos->second);
+                        return varPos->second.get();
                     }
                     return nullptr;
                 }
@@ -84,10 +85,10 @@ namespace _18_11_18_private {
     }
 
     const ExportRegisterClassInformation::static_cast_map * ExportRegisterClassInformation::find_up_cast_map(
-            const sstd_type_index_t & argIndex){
+        const sstd_type_index_t & argIndex) {
         auto varMap = this_cpp_file::get_type_index_hash_map();
-        auto varAns = varMap->find( argIndex );
-        if(varAns){
+        auto varAns = varMap->find(argIndex);
+        if (varAns) {
             return &(varAns->up_cast_map);
         }
         return nullptr;
